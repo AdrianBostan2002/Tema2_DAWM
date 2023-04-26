@@ -1,5 +1,6 @@
 ﻿using Core.Dtos;
 using Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Project.Controllers
@@ -17,6 +18,7 @@ namespace Project.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize]
         public IActionResult Add(ClassAddDto payload)
         {
             var result = classService.Add(payload);
@@ -30,6 +32,7 @@ namespace Project.Controllers
         }
 
         [HttpGet("get-all")]
+        [Authorize]
         public ActionResult<List<ClassViewDto>> GetAll()
         {
             var result = classService.GetAll();

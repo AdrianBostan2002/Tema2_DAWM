@@ -1,6 +1,6 @@
 ﻿using Core.Dtos;
 using Core.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Project.Controllers
@@ -17,6 +17,7 @@ namespace Project.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult AddGrade(GradeAddDto payload)
         {
             var result = gradesService.Add(payload);
@@ -30,6 +31,7 @@ namespace Project.Controllers
         }
 
         [HttpGet("all-grades-from/{studentId}")]
+        [Authorize]
         public IActionResult GetAllGradesFrom(int studentId)
         {
             var result = gradesService.GetAllGradesOrderedFrom(studentId);
@@ -43,6 +45,7 @@ namespace Project.Controllers
         }
 
         [HttpGet("all-grades-grouped-by-courses")]
+        [Authorize]
         public IActionResult GetAllGradesFrom()
         {
             var result = gradesService.GetAllGradesGroupedByCourse();

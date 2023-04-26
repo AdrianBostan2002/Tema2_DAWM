@@ -4,6 +4,7 @@ using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Project.Controllers
 {
@@ -35,35 +36,30 @@ namespace Project.Controllers
             return Ok(new { token = jwtToken });
         }
 
-        [HttpGet("/get_all_grades")]
-        [Authorize(Roles = "Student, Teacher")]
+        [HttpGet("/student_get_all_grades")]
+        [Authorize(Roles = "Student")]
         public IActionResult GetAllGrades()
         {
-            var token = Request.Headers["Authorization"].ToString().Substring(7);
+            int studentId = int.Parse((User.Claims.FirstOrDefault(c => c.Type == "studentId").Value));   
 
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-            var role = jwtToken.Claims.First(c => c.Type == "role").Value;
-            var studentId = jwtToken.Claims.First(c => c.Type == "studentId").Value;
+            var grades = userService.GetAllGradesFromStudent(studentId);
+            if (grades != null)
+            {
+                return Ok(grades);
+            }
+            return BadRequest("There is no student with such id");
+        }
 
-            if (role == RoleType.Student.ToString()) 
+        [HttpGet("/teacher_get_all_grades")]
+        [Authorize(Roles = "Teacher")]
+        public IActionResult GetAllGradesTeacher()
+        {
+            var grades = userService.GetAllGradesFromTeacher();
+            if (grades != null)
             {
-                var grades = userService.GetAllGradesFromStudent(int.Parse(studentId));
-                if(grades!=null)
-                {
-                    return Ok(grades);
-                }
-                return BadRequest("There is no student with such id");
+                return Ok(grades);
             }
-            else
-            {
-                var grades = userService.GetAllGradesFromTeacher();
-                if (grades != null)
-                {
-                    return Ok(grades);
-                }
-                return BadRequest();
-            }
+            return BadRequest();
         }
     }
 }
