@@ -12,4 +12,3 @@ public class Student : BaseEntity
 
     public string Address { get; set; }
 }
-
